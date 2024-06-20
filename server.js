@@ -17,6 +17,12 @@ const mongoose = require('mongoose');
 app.use(express.static("public"));
 app.use(express.json());
 app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://car-park-payingapp-front.vercel.app/', 'https://park-charge-management-front.vercel.app/'],// Replace with your client's origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+app.use(express.static(path.join(__dirname,'client','build')))
 app.use(bodyParser.json());
 const http = require("http");
 app.use(bodyParser.json());
@@ -81,6 +87,7 @@ const chargeCustomer = async (customerId) => {
 
 app.post("/create-payment-intent", async (req, res) => {
   const { items } = req.body;
+  console.log("items", items);
   // Alternatively, set up a webhook to listen for the payment_intent.succeeded event
   // and attach the PaymentMethod to a new Customer
   const customer = await stripe.customers.create();
@@ -176,16 +183,27 @@ app.post('/send-email', async (req, res) => {
   res.status(201).json({ message: 'User created successfully' });
 });
 
+app.get('/payments_log', async (req, res) => {
+  const paymentIntents_list = await stripe.paymentIntents.list({
+    limit: 1,
+  });
+  // console.log(paymentIntents_list);
+  // console.log(paymentIntents_list.data);
+  res.send({data: paymentIntents_list.data});
+  
+})
+
 app.post('/save_paymentdata', upload.none(), async (req, res) => {
-  console.log("formData::", req.body.paymentData)
-  console.log("formData::", req.body.paymentEmail)
+
+  console.log("formData::", req.body.paymentData, req.body.paymentEmail, req.body.licensePlateNumber, req.body.payAmount);
+  console.log("formData===============::", req.body);
   const data_obj = JSON.parse(req.body.paymentData);
-  const email = req.body.paymentEmail;
-  currentLicenseNumber = req.body.licensePlateNumber;
+  const { paymentEmail, licensePlateNumber, payAmount } = req.body;
   
   // Add the email to the data_obj.data object
-  data_obj.data.email = email;
-  data_obj.data.licensePlateNumber = currentLicenseNumber;
+  data_obj.data.email = paymentEmail;
+  data_obj.data.licensePlateNumber = licensePlateNumber;
+  data_obj.data.payAmount = payAmount;
 
   console.log(data_obj.data);
 
@@ -193,13 +211,13 @@ app.post('/save_paymentdata', upload.none(), async (req, res) => {
     email: data_obj.data.email,
     firstName: data_obj.data.firstName,
     lastName: data_obj.data.lastName,
-    address: data_obj.data.address,
-    address2: data_obj.data.address2,
+    address: data_obj.data.address, 
     city: data_obj.data.city,
     state: data_obj.data.stateLocation,
     zipCode: data_obj.data.zipcode,
     phoneNumber: data_obj.data.phoneNumber,
     licensePlateNumber: data_obj.data.licensePlateNumber,
+    payAmount: data_obj.data.payAmount,
   })
 
   newData.save();
@@ -215,10 +233,7 @@ app.get("/get-license", (req, res) => {
 });
 // ---------------------------------------------------------------------
 
-mongoose.connect(mongoURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+mongoose.connect(mongoURI)
   .then(() => {
     console.log("MongoDB is connected.")
   })
