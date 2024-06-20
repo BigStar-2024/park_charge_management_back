@@ -19,10 +19,7 @@ const paymentSchema = new Schema(
         address: {
             type: String,
             required: true
-        },
-        address2: {
-            type: String,
-        },
+        }, 
         city: {
             type: String,
             required: true
@@ -43,7 +40,11 @@ const paymentSchema = new Schema(
             type: String,
             required: true,
         },
+        payAmount: {
+            type: String,
+            required: true,
+        },
     }
 )
 
-module.exports = mongoose.model("Payment", paymentSchema)
+module.exports = mongoose.model("violationpaymentlogs", paymentSchema)
