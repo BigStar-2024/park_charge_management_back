@@ -173,10 +173,6 @@ const sendMail = async (data) => {
 
 
 app.post('/send-email', async (req, res) => {
-  // console.log("here is now");
-  // console.log(req.body);
-  // const { title, content } = req.body;
-  // Do something with the name and email data
 
   sendMail(req.body);
 
@@ -188,8 +184,6 @@ app.get('/payments_log', async (req, res) => {
   const paymentIntents_list = await stripe.paymentIntents.list({
       limit: 1,
     });
-    // console.log(paymentIntents_list);
-// console.log(paymentIntents_list.data);
       res.send({data: paymentIntents_list.data[0]});
   
 })
