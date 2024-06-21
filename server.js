@@ -96,6 +96,7 @@ app.post("/create-payment-intent", async (req, res) => {
   const paymentIntent = await stripe.paymentIntents.create({
     customer: customer.id,
     setup_future_usage: "off_session",
+    // amount: calculateOrderAmount(items[0].payAmount*100),
     amount: calculateOrderAmount(items[0].payAmount*100),
     currency: "usd",
     // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
@@ -185,11 +186,11 @@ app.post('/send-email', async (req, res) => {
 
 app.get('/payments_log', async (req, res) => {
   const paymentIntents_list = await stripe.paymentIntents.list({
-    limit: 1,
-  });
-  // console.log(paymentIntents_list);
-  // console.log(paymentIntents_list.data);
-  res.send({data: paymentIntents_list.data});
+      limit: 1,
+    });
+    // console.log(paymentIntents_list);
+// console.log(paymentIntents_list.data);
+      res.send({data: paymentIntents_list.data[0]});
   
 })
 
