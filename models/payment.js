@@ -44,6 +44,10 @@ const paymentSchema = new Schema(
             type: String,
             required: true,
         },
+        parkName : {
+            type: String,
+            required: true,
+        },
     }
 )
 
