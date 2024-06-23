@@ -190,16 +190,15 @@ app.get('/payments_log', async (req, res) => {
 
 app.post('/save_paymentdata', upload.none(), async (req, res) => {
 
-  console.log("formData::", req.body.paymentData, req.body.paymentEmail, req.body.licensePlateNumber, req.body.payAmount, req.body.parkName);
+  console.log("formData::", req.body.paymentData, req.body.paymentEmail, req.body.licensePlateNumber, req.body.payAmount);
   console.log("formData===============::", req.body);
   const data_obj = JSON.parse(req.body.paymentData);
-  const { paymentEmail, licensePlateNumber, payAmount, parkName } = req.body;
+  const { paymentEmail, licensePlateNumber, payAmount  } = req.body;
   
   // Add the email to the data_obj.data object
   data_obj.data.email = paymentEmail;
   data_obj.data.licensePlateNumber = licensePlateNumber;
-  data_obj.data.payAmount = payAmount;
-  data_obj.data.parkName = parkName;
+  data_obj.data.payAmount = payAmount; 
 
 
   console.log(data_obj.data);
@@ -214,8 +213,7 @@ app.post('/save_paymentdata', upload.none(), async (req, res) => {
     zipCode: data_obj.data.zipcode,
     phoneNumber: data_obj.data.phoneNumber,
     licensePlateNumber: data_obj.data.licensePlateNumber,
-    payAmount: data_obj.data.payAmount,
-    parkName: data_obj.data.parkName,
+    payAmount: data_obj.data.payAmount, 
   })
 
   newData.save();

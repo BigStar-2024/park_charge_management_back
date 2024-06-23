@@ -43,11 +43,7 @@ const paymentSchema = new Schema(
         payAmount: {
             type: String,
             required: true,
-        },
-        parkName : {
-            type: String,
-            required: true,
-        },
+        }, 
     }
 )
 
