@@ -46,7 +46,6 @@ const storage = multer.diskStorage({
     const ext = path.extname(file.originalname); // Get the file extension
     const currentFileName = req.body.id + "receipt" + ext;
     cb(null, currentFileName); // Rename the file with original extension
-    console.log(currentFileName);
     setCurrentFile("uploads/" + currentFileName);
   }
 })
@@ -79,15 +78,12 @@ const chargeCustomer = async (customerId) => {
     });
   } catch (err) {
     // Error code will be authentication_required if authentication is needed
-    console.log("Error code is: ", err.code);
     const paymentIntentRetrieved = await stripe.paymentIntents.retrieve(err.raw.payment_intent.id);
-    console.log("PI retrieved: ", paymentIntentRetrieved.id);
   }
 };
 
 app.post("/create-payment-intent", async (req, res) => {
   const { items } = req.body;
-  console.log("items", items);
   // Alternatively, set up a webhook to listen for the payment_intent.succeeded event
   // and attach the PaymentMethod to a new Customer
   const customer = await stripe.customers.create();
@@ -163,9 +159,7 @@ const sendMail = async (data) => {
           contentType: 'application/pdf'
         }
       ]
-      // text: helpmessages,
     });
-    console.log("success!");
   } catch (error) {
     console.log(error);
   }
@@ -190,9 +184,6 @@ app.get('/payments_log', async (req, res) => {
 
 app.post('/save_paymentdata', upload.none(), async (req, res) => {
 
-  console.log("formData::", req.body.paymentData, req.body.paymentEmail, req.body.licensePlateNumber, 
-  req.body.payAmount, req.body.parkName, req.body.parkingChargeNumber, req.body.issue_date);
-  console.log("formData===============::", req.body);
   const data_obj = JSON.parse(req.body.paymentData);
   const { paymentEmail, licensePlateNumber, payAmount, parkName, parkingChargeNumber, issue_date  } = req.body;
   
@@ -206,7 +197,6 @@ app.post('/save_paymentdata', upload.none(), async (req, res) => {
 
 
 
-  console.log(data_obj.data);
 
   let newData = new PaymentModel({
     email: data_obj.data.email,
@@ -234,6 +224,15 @@ app.post("/set-license", (req, res) => {
 })
 app.get("/get-license", (req, res) => {
   res.json(currentLicenseNumber);
+});
+
+app.get('/violationpaymentlog', async (req, res) => {
+  try {
+    const result = await PaymentModel.find({});
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 // ---------------------------------------------------------------------
 
