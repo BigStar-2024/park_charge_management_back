@@ -52,6 +52,10 @@ const paymentSchema = new Schema(
             type: String,
             required: true,
         },
+        issue_date: {
+            type: String,
+            required: true,
+        },
     }
 )
 

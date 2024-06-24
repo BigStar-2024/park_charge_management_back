@@ -191,10 +191,10 @@ app.get('/payments_log', async (req, res) => {
 app.post('/save_paymentdata', upload.none(), async (req, res) => {
 
   console.log("formData::", req.body.paymentData, req.body.paymentEmail, req.body.licensePlateNumber, 
-  req.body.payAmount, req.body.parkName, req.body.parkingChargeNumber);
+  req.body.payAmount, req.body.parkName, req.body.parkingChargeNumber, req.body.issue_date);
   console.log("formData===============::", req.body);
   const data_obj = JSON.parse(req.body.paymentData);
-  const { paymentEmail, licensePlateNumber, payAmount, parkName, parkingChargeNumber  } = req.body;
+  const { paymentEmail, licensePlateNumber, payAmount, parkName, parkingChargeNumber, issue_date  } = req.body;
   
   // Add the email to the data_obj.data object
   data_obj.data.email = paymentEmail;
@@ -202,6 +202,8 @@ app.post('/save_paymentdata', upload.none(), async (req, res) => {
   data_obj.data.payAmount = payAmount; 
   data_obj.data.parkName = parkName;
   data_obj.data.parkingChargeNumber = parkingChargeNumber;
+  data_obj.data.issue_date = issue_date;
+
 
 
   console.log(data_obj.data);
@@ -219,6 +221,7 @@ app.post('/save_paymentdata', upload.none(), async (req, res) => {
     payAmount: data_obj.data.payAmount, 
     parkName: data_obj.data.parkName,
     parkingChargeNumber: data_obj.data.parkingChargeNumber,
+    issue_date: data_obj.data.issue_date,
   })
 
   newData.save();
